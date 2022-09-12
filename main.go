@@ -22,5 +22,10 @@ func main() {
 
 	routes.TutorialRoutes(handler)
 
-	app.Listen(os.Getenv("PORT"))
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8000"
+	}
+	app.Listen(":" + port)
 }
