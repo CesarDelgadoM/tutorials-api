@@ -5,13 +5,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func TutorialRoutes(app *fiber.App) {
+type Routes struct {
+	app *fiber.App
+}
 
-	app.Get("/api/tutorials", handlers.GetAllTutorials)
-	app.Get("/api/tutorial/:id", handlers.GetTutorialById)
-	app.Post("/api/tutorial", handlers.CreateTutorial)
-	app.Put("/api/tutorial/:id", handlers.UpdateTutorial)
-	app.Delete("/api/tutorial/:id", handlers.DeleteTutorialById)
-	app.Delete("/api/tutorials", handlers.DeleteAllTutorials)
-	app.Get("/api/tutorial/title/:title", handlers.GetTutorialByTitle)
+func NewRoutes(app *fiber.App) *Routes {
+	return &Routes{
+		app: app,
+	}
+}
+
+func (r *Routes) TutorialRoutes(handlers *handlers.TutorialHandlers) {
+
+	r.app.Get("/api/tutorials", handlers.GetAllTutorials)
+	r.app.Get("/api/tutorial/:id", handlers.GetTutorialById)
+	r.app.Post("/api/tutorial", handlers.CreateTutorial)
+	r.app.Put("/api/tutorial/:id", handlers.UpdateTutorial)
+	r.app.Delete("/api/tutorial/:id", handlers.DeleteTutorialById)
+	r.app.Delete("/api/tutorials", handlers.DeleteAllTutorials)
+	r.app.Get("/api/tutorial/title/:title", handlers.GetTutorialByTitle)
 }

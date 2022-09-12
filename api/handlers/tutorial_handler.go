@@ -8,16 +8,30 @@ import (
 	"time"
 
 	"github.com/CesarDelgadoM/tutorials-api/api/models"
-	"github.com/CesarDelgadoM/tutorials-api/database"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var collection *mongo.Collection = database.ConnectMongoDB().Collection(os.Getenv("COLLECTION_TUTORIAL"))
+type TutorialHandlers struct {
+	db         *mongo.Database
+	collection *mongo.Collection
+}
 
-func GetAllTutorials(c *fiber.Ctx) error {
+func NewTutorialHandler(db *mongo.Database) *TutorialHandlers {
+
+	collection := db.Collection(os.Getenv("COLLECTION_TUTORIAL"))
+
+	return &TutorialHandlers{
+		db:         db,
+		collection: collection,
+	}
+}
+
+//var collection *mongo.Collection = database.ConnectMongoDB().Collection(os.Getenv("COLLECTION_TUTORIAL"))
+
+func (h *TutorialHandlers) GetAllTutorials(c *fiber.Ctx) error {
 
 	log.Println("Create context...")
 
@@ -27,7 +41,7 @@ func GetAllTutorials(c *fiber.Ctx) error {
 	var tutorials []models.Tutorial
 
 	log.Println("Find data in the database...")
-	result, err := collection.Find(ctx, bson.M{})
+	result, err := h.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
 	}
@@ -49,7 +63,7 @@ func GetAllTutorials(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(tutorials)
 }
 
-func GetTutorialById(c *fiber.Ctx) error {
+func (h *TutorialHandlers) GetTutorialById(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -62,7 +76,7 @@ func GetTutorialById(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Parse ObjectIDFromHex Error")
 	}
 
-	err = collection.FindOne(ctx, bson.M{"_id": idhex}).Decode(&tutorial)
+	err = h.collection.FindOne(ctx, bson.M{"_id": idhex}).Decode(&tutorial)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Tutorial Not Found")
 	}
@@ -70,7 +84,7 @@ func GetTutorialById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(tutorial)
 }
 
-func CreateTutorial(c *fiber.Ctx) error {
+func (h *TutorialHandlers) CreateTutorial(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -87,7 +101,7 @@ func CreateTutorial(c *fiber.Ctx) error {
 	newTutorial.CreateAt = primitive.NewDateTimeFromTime(time.Now())
 	newTutorial.UpdateAt = primitive.NewDateTimeFromTime(time.Now())
 
-	result, err := collection.InsertOne(ctx, newTutorial)
+	result, err := h.collection.InsertOne(ctx, newTutorial)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
 	}
@@ -95,7 +109,7 @@ func CreateTutorial(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
-func UpdateTutorial(c *fiber.Ctx) error {
+func (h *TutorialHandlers) UpdateTutorial(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -116,7 +130,7 @@ func UpdateTutorial(c *fiber.Ctx) error {
 	tutorialUpdate := models.NewTutorial(idhex, tutorial.Title, tutorial.Description, tutorial.Published)
 	tutorialUpdate.UpdateAt = primitive.NewDateTimeFromTime(time.Now())
 
-	result, err := collection.UpdateOne(ctx, bson.M{"_id": idhex}, bson.M{"$set": tutorialUpdate})
+	result, err := h.collection.UpdateOne(ctx, bson.M{"_id": idhex}, bson.M{"$set": tutorialUpdate})
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
 	}
@@ -124,7 +138,7 @@ func UpdateTutorial(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(result)
 }
 
-func DeleteTutorialById(c *fiber.Ctx) error {
+func (h *TutorialHandlers) DeleteTutorialById(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -135,7 +149,7 @@ func DeleteTutorialById(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Parse ObjectIDFromHex Error")
 	}
 
-	result, err := collection.DeleteOne(ctx, bson.M{"_id": idhex})
+	result, err := h.collection.DeleteOne(ctx, bson.M{"_id": idhex})
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Delete Tutorial Error")
 	}
@@ -147,12 +161,12 @@ func DeleteTutorialById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(result)
 }
 
-func DeleteAllTutorials(c *fiber.Ctx) error {
+func (h *TutorialHandlers) DeleteAllTutorials(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	result, err := collection.DeleteMany(ctx, bson.D{})
+	result, err := h.collection.DeleteMany(ctx, bson.D{})
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Delete Many Error")
 	}
@@ -160,7 +174,7 @@ func DeleteAllTutorials(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(result)
 }
 
-func GetTutorialByTitle(c *fiber.Ctx) error {
+func (h *TutorialHandlers) GetTutorialByTitle(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -168,7 +182,7 @@ func GetTutorialByTitle(c *fiber.Ctx) error {
 	var tutorials []models.Tutorial
 	title := c.Params("title")
 
-	cursor, err := collection.Find(ctx, bson.D{
+	cursor, err := h.collection.Find(ctx, bson.D{
 		{
 			Key: "title", Value: primitive.Regex{
 				Pattern: title,
