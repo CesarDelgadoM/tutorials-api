@@ -1,0 +1,173 @@
+{
+	"info": {
+		"_postman_id": "de8183d2-e8e2-423a-9bd0-67344db92d4f",
+		"name": "tutorials_collections",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10863031"
+	},
+	"item": [
+		{
+			"name": "get_all_tutorial",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/tutorials",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorials"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_by_id_tutorial",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/tutorial/631be506a2c5e080776de6e5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorial",
+						"631be506a2c5e080776de6e5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_tutorial",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Editar imagenes en linux\",\r\n    \"description\": \"Edicion de imagenes en OS linux - edited\",\r\n    \"published\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/tutorial/631be506a2c5e080776de6e5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorial",
+						"631be506a2c5e080776de6e5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_tutorial",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Editar imagenes en linux\",\r\n    \"description\": \"Edicion de imagenes en OS linux\",\r\n    \"published\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/tutorial",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorial"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_tutorial",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/tutorial/631be506a2c5e080776de6e5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorial",
+						"631be506a2c5e080776de6e5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_all_tutorial",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/tutorials",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorials"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_by_title_tutorial",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/tutorial/title/Editar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"tutorial",
+						"title",
+						"Editar"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
