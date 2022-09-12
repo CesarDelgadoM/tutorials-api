@@ -1,1 +1,1 @@
-echo "web: currency" > Procfile
+web: bin/tutorials_api
